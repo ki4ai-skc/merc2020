@@ -51,35 +51,34 @@ def speech_base_model():
     model_in = Input(shape=(400, 40, 1))
 
     # Layer1 : conv , batch norm, relu, and maxpool
-    model_conv_1 = Conv2D(8, (5, 5), padding='same')(model_in)
-    model_conv_1 = BatchNormalization()(model_conv_1)
-    model_conv_1 = Activation(activation='relu')(model_conv_1)
-    model_conv_1 = MaxPooling2D((2, 2), strides=(2, 2), padding='valid')(model_conv_1)
+    model_conv2d_1 = Conv2D(8, (5, 5), padding='same')(model_in)
+    model_bn_1 = BatchNormalization()(model_conv2d_1)
+    model_relu_1 = Activation(activation='relu')(model_bn_1)
+    model_mpool_1 = MaxPooling2D((2, 2), strides=(2, 2), padding='valid')(model_relu_1)
 
     # Layer2 : conv , batch norm, relu, and maxpool
-    model_conv_2 = Conv2D(16, (5, 5), padding='same')(model_conv_1)
-    model_conv_2 = BatchNormalization()(model_conv_2)
-    model_conv_2 = Activation(activation='relu')(model_conv_2)
-    model_conv_2 = MaxPooling2D((2, 2), strides=(2, 2), padding='valid')(model_conv_2)
+    model_conv2d_2 = Conv2D(16, (5, 5), padding='same')(model_mpool_1)
+    model_bn_2 = BatchNormalization()(model_conv2d_2)
+    model_relu_2 = Activation(activation='relu')(model_bn_2)
+    model_mpool_2 = MaxPooling2D((2, 2), strides=(2, 2), padding='valid')(model_relu_2)
 
     # Layer3 : conv , batch norm, relu, and maxpool
-    model_conv_3 = Conv2D(32, (5, 5), padding='same')(model_conv_2)
-    model_conv_3 = BatchNormalization()(model_conv_3)
-    model_conv_3 = Activation(activation='relu')(model_conv_3)
-    model_conv_3 = MaxPooling2D((2, 2), strides=(2, 2), padding='valid')(model_conv_3)
+    model_conv2d_3 = Conv2D(32, (5, 5), padding='same')(model_mpool_2)
+    model_bn_3 = BatchNormalization()(model_conv2d_3)
+    model_relu_3 = Activation(activation='relu')(model_bn_3)
+    model_mpool_3 = MaxPooling2D((2, 2), strides=(2, 2), padding='valid')(model_relu_3)
 
     # Flatten layer
-    model_flat = TimeDistributed(Flatten())(model_conv_3)
+    model_flat = TimeDistributed(Flatten())(model_mpool_3)
 
     # bi-lstm and attention pooling
-    model_lstm = Bidirectional(LSTM(32, return_sequences=True))(model_flat)
-    model_att = attention_pooling(model_lstm)
+    model_bi_lstm = Bidirectional(LSTM(32, return_sequences=True))(model_flat)
+    model_att = attention_pooling(model_bi_lstm)
 
     # dense layer
     model_dense_1 = Dense(64, activation='relu')(model_att)
     model_dense_1 = Dropout(0.5)(model_dense_1)
-    model_dense_2 = Dense(7, name='output_layer')(model_dense_1)
-    model_out = Activation(activation='softmax')(model_dense_2)
+    model_out = Dense(7, activation='softmax', name='output_layer')(model_dense_1)
 
     model = Model(inputs=model_in, outputs=model_out)
     model.summary()
@@ -114,7 +113,7 @@ def main():
     early_stopping = EarlyStopping(monitor='val_acc', min_delta=0.0005, patience=30, verbose=1, mode='auto')
 
     # Training
-    adam = keras.optimizers.Adam(lr = 0.001, beta_1 = 0.5, beta_2 = 0.999, amsgrad=False)
+    adam = keras.optimizers.Adam(lr = 0.001, beta_1 = 0.9, beta_2 = 0.999, amsgrad=False)
     model.compile(loss='categorical_crossentropy', optimizer=adam, metrics=['accuracy'])
     model.fit(x_train, y_train, batch_size=256, epochs=256, validation_data=(x_val, y_val), verbose=1, callbacks=[early_stopping, checkpoint])
 
