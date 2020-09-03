@@ -77,7 +77,7 @@ pip install -r requirements.txt
 
 #### Network Architecture
 
-> ![](.\img\network_architecture.png)
+> <img src="./img/network_architecture.png" alt="network_architecture" style="zoom:50%;" />
 >
 > *Network architecture*
 >
@@ -96,7 +96,7 @@ pip install -r requirements.txt
 > * bi-LSTM
 >
 >   * bi-directional LSTM
->   * LSTM unit = 32
+>   * LSTM unit = 64
 >
 > * attention pooling
 >
@@ -160,7 +160,7 @@ pip install -r requirements.txt
 #### Experimental result
 
 > * validation accuracy
->   * 39.84 %
+>   * 39.25 %
 
 ***
 
