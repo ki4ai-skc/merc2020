@@ -26,7 +26,7 @@ def attention_pooling(model_input):
     """
 
     # average pooling for lstm units
-    model_input_mean = AveragePooling1D(pool_size=64, data_format='channels_first', padding='valid')(model_input)
+    model_input_mean = AveragePooling1D(pool_size=128, data_format='channels_first', padding='valid')(model_input)
     model_input_mean = Lambda(lambda x: K.squeeze(x, axis=2))(model_input_mean)
 
     # transposed input
@@ -72,7 +72,7 @@ def speech_base_model():
     model_flat = TimeDistributed(Flatten())(model_mpool_3)
 
     # bi-lstm and attention pooling
-    model_bi_lstm = Bidirectional(LSTM(32, return_sequences=True))(model_flat)
+    model_bi_lstm = Bidirectional(LSTM(64, return_sequences=True))(model_flat)
     model_att = attention_pooling(model_bi_lstm)
 
     # dense layer
@@ -91,8 +91,8 @@ def main():
     _ROOT_PATH = "dataset/"
     x_train = np.load(_ROOT_PATH + "speech_train.npy")
     x_val = np.load(_ROOT_PATH + "speech_val.npy")
-    y_train = np.load(_ROOT_PATH + "speech_train.npy")
-    y_val = np.load(_ROOT_PATH + "speech_val.npy")
+    y_train = np.load(_ROOT_PATH + "label_train.npy")
+    y_val = np.load(_ROOT_PATH + "label_val.npy")
 
     # Convert labels to categorical one-hot encoding
     y_train = keras.utils.to_categorical(y_train, num_classes=7)

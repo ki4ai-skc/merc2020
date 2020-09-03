@@ -15,7 +15,7 @@ WINDOW_SIZE = 0.025 # filter window size (25ms)
 NUM_MELS = 40       # Mel filter number
 PRE_EMPHASIS_COEFF = 0.97  # Pre-Emphasis filter coefficient
 
-EMOTION_LIST = ['ang', 'dis', 'fea', 'hap', 'neu', 'sad', 'sur']
+EMOTION_LIST = ['hap', 'ang', 'dis', 'fea', 'neu', 'sad', 'sur']
 
 def preprocessing(wav, sampling_rate):
     """
