@@ -16,7 +16,7 @@ os.environ["CUDA_VISIBLE_DEVICES"]='0'
 
 def attention_pooling(model_input):
     """
-    attention pooling moddule
+    attention pooling module
 
     Args:
         model_input: sequential input
@@ -99,7 +99,7 @@ def main():
     y_val = keras.utils.to_categorical(y_val, num_classes=7)
 
     # Training Parameter setting
-    gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.9)
+    gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.3)
     config = tf.ConfigProto(device_count={'GPU': 1, 'CPU': 30}, gpu_options=gpu_options)
     sess = tf.Session(config=config)
     keras.backend.set_session(sess)

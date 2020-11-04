@@ -76,17 +76,17 @@ def preprocessing(wav, sampling_rate):
     return input_mels
 
 # Main Code
-def main():
+def main(data_type):
     """
     main code
 
-    """
-    # select data tye (train or val)
-    data_type = 'train'
-    # data_type = 'val'
+    Args:
+        data_type: data type (train/val/test1/test2/test3)
 
+    """
     # data folder path
-    load_path = './' + data_type
+    load_path = '/data2/DATA_SET/qia2020/' + data_type
+    # load_path = './' + data_type
 
     # file list
     dir_files = os.listdir(load_path)
@@ -96,15 +96,11 @@ def main():
             file_list.append(files)
     file_list.sort(key=lambda f: int(f.split("-")[0]))
 
+    # Data
     x_npy = np.zeros((len(file_list), MAX_FRAME_LENGTH, NUM_MELS, 1))
-    y_npy = np.zeros((len(file_list),))
     for num_file, file_name in enumerate(file_list):
         file_path = load_path + '/' + file_name
         print('File path = ' + file_path)
-
-        # Obtain file_id and Emotion label
-        emotion = file_name.split("-")[6]
-        emotion_num = EMOTION_LIST.index(emotion)  # Convert to emotion number
 
         # load wav
         wav, sampling_rate = librosa.load(file_path)
@@ -114,12 +110,29 @@ def main():
 
         # save
         x_npy[num_file, :, :, 0] = input_mels.T
-        y_npy[num_file] = emotion_num
+
+    # Label
+    if (data_type == 'train') or (data_type == 'val'):
+        y_npy = np.zeros((len(file_list),))
+        for num_file, file_name in enumerate(file_list):
+            # Obtain Emotion label
+            emotion = file_name.split("-")[6]
+            emotion_num = EMOTION_LIST.index(emotion)  # Convert to emotion number
+
+            # save
+            y_npy[num_file] = emotion_num
 
     # Save numpy
-    save_path = './dataset/'
-    np.save(save_path + 'speech_' + data_type + '.npy', x_npy)
-    np.save(save_path + 'label_' + data_type + '.npy', y_npy)
+    if not(os.path.isdir('dataset')):
+        os.makedirs(os.path.join('dataset'))
+
+    np.save('dataset/' + 'speech_' + data_type + '.npy', x_npy)
+    if (data_type == 'train') or (data_type == 'val'):
+        np.save('dataset/' + 'label_' + data_type + '.npy', y_npy)
+
+    print("Finished")
 
 if __name__ == '__main__':
-    main()
+    print("train/val/test1/test2/test3:")
+    data_type = input()
+    main(data_type)
